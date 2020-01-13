@@ -21,7 +21,7 @@
                             <thead>
                                 <th data-toggle="tooltip" data-placement="bottom" title="Fecha de Inicio / Fecha de Finalización">Fechas I/F</th>
                                 <th>Cliente</th>
-                                <th>Productos</th>
+                                <th data-toggle="tooltip" data-placement="bottom" title="Productos Únicos / Totales">Productos U/T</th>
                                 <th>Monto</th>
                                 <th></th>
                             </thead>
@@ -33,7 +33,7 @@
                                     <tr>
                                         <td>{{ date('d-m-y', strtotime($sale->created_at)) }}<br>{{ date('d-m-y', strtotime($sale->created_at)) }}</td>
                                         <td><a href="{{ route('clients.show', $sale->client) }}">{{ $sale->client->name }}<br>{{ $sale->client->document_type }}-{{ $sale->client->document_id }}</a></td>
-                                        <td>{{ $sale->products->sum('qty') }}</td>
+                                        <td>{{ $sale->products->count() }} / {{ $sale->products->sum('qty') }}</td>
                                         <td>{{ $sale->transactions->sum('amount') }}$</td>
                                         <td class="td-actions text-right">
                                             <a href="{{ route('sales.show', ['sale' => $sale]) }}" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Ver Venta">
@@ -77,7 +77,7 @@
                         <thead>
                             <th>Fecha</th>
                             <th>Cliente</th>
-                            <th>Productos</th>
+                            <th data-toggle="tooltip" data-placement="bottom" title="Productos Únicos / Totales">Productos U/T</th>
                             <th data-toggle="tooltip" data-placement="bottom" title="Monto Pagado / Monto Total">Monto P/T</th>
                             <th></th>
                         </thead>
@@ -89,7 +89,7 @@
                                 <tr>
                                     <td>{{ date('d-m-y', strtotime($sale->created_at)) }}</td>
                                     <td><a href="{{ route('clients.show', $sale->client) }}">{{ $sale->client->name }}<br>{{ $sale->client->document_type }}-{{ $sale->client->document_id }}</a></td>
-                                    <td>{{ $sale->products->count() }}</td>
+                                    <td>{{ $sale->products->count() }} / {{ $sale->products->sum('qty') }}</td>
                                     <td >{{ $sale->transactions->sum('amount') }}$ / {{ $sale->products->sum('total_amount') }}$</td>
                                     <td class="td-actions text-right">
                                         <a href="{{ route('sales.show', ['sale' => $sale]) }}" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Editar Venta">
