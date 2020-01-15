@@ -77,6 +77,7 @@ class SaleController extends Controller
 
     public function finalize(Sale $sale)
     {
+        $sale->total_amount = $sale->products->sum('total_amount');
         $sale->finalized_at = Carbon::now()->toDateTimeString();
         $sale->save();
         return back()->withStatus('La venta ha sido finalizada satisfactoriamente.');

@@ -20,25 +20,23 @@
                     <div class="">
                         <table class="table tablesorter " id="">
                             <thead class=" text-primary">
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Documento</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Teléfono</th>
-                                <th scope="col">Compras</th>
-                                <th scope="col">Total Pagado</th>
-                                <th scope="col">Última Compra</th>
-                                <th scope="col"></th>
+                                <th>Nombre</th>
+                                <th>Email / Teléfono</th>
+                                <th>Compras</th>
+                                <th>Total Pagado</th>
+                                <th>Última Compra</th>
+                                <th></th>
                             </thead>
                             <tbody>
                                 @foreach ($clients as $client)
                                     <tr>
-                                        <td>{{ $client->name }}</td>
-                                        <td>{{ $client->document_type }}-{{ $client->document_id }}</td>
+                                        <td>{{ $client->name }}<br>{{ $client->document_type }}-{{ $client->document_id }}</td>
                                         <td>
                                             <a href="mailto:{{ $client->email }}">{{ $client->email }}</a>
+                                            <br>
+                                            {{ $client->phone }}
                                         </td>
-                                        <td>{{ $client->phone }}</td>
-                                        <td>{{ $client->sales->count() }}</td>
+                                        <td>{{ $client->sales->count() }} ({{ $client->sales->sum('total_amount') }}$)</td>
                                         <td>{{ $client->transactions->sum('amount') }}$</td>
                                         <td>{{ ($client->sales->sortByDesc('created_at')->first()) ? date('d-m-y', strtotime($client->sales->sortByDesc('created_at')->first()->created_at)) : 'NUNCA' }}</td>
                                         <td class="td-actions text-right">
