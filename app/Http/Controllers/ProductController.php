@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use App\SoldProduct;
+use App\ReceivedProduct;
 use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
@@ -56,7 +57,8 @@ class ProductController extends Controller
     {
         return view('inventory.products.show', [
             'product' => $product,
-            'solds' => SoldProduct::where('product_id', $product->id)->orderBy('created_at', 'desc')->paginate(25)
+            'solds' => SoldProduct::where('product_id', $product->id)->orderBy('created_at', 'desc')->limit(25)->get(),
+            'receiveds' => ReceivedProduct::where('product_id', $product->id)->orderBy('created_at', 'desc')->limit(25)->get()
         ]);
     }
 

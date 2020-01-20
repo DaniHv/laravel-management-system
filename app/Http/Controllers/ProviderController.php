@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Receipt;
 use App\Provider;
 use App\Transaction;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,9 @@ class ProviderController extends Controller
      */
     public function index(Provider $model)
     {
-        return view('providers.index', ['providers' => $model->paginate(25)]);
+        return view('providers.index', [
+            'providers' => $model->paginate(25)
+        ]);
     }
 
     /**
@@ -40,7 +43,7 @@ class ProviderController extends Controller
     public function store(ProviderRequest $request, Provider $provider)
     {
         $provider->create($request->all());
-        return redirect()->route('providers.index')->withStatus(__('Provider successfully created.'));
+        return redirect()->route('providers.index')->withStatus('Proveedor registrado satisfactoriamente');
     }
 
     /**
@@ -51,10 +54,12 @@ class ProviderController extends Controller
      */
     public function edit(Provider $Provider)
     {
-        return view('providers.edit', compact('Provider'));
+        return view('providers.edit', [
+            'provider' => $provider
+        ]);
     }
 
-    
+
     /**
      * Display the specified resource.
      *
@@ -65,7 +70,8 @@ class ProviderController extends Controller
     {
         return view('providers.show', [
             'provider' => $provider,
-            'transactions' => Transaction::where('provider_id', $provider->id)->orderBy('created_at', 'desc')->paginate(25)
+            'transactions' => Transaction::where('provider_id', $provider->id)->orderBy('created_at', 'desc')->limit(25)->get(),
+            'receipts' => Receipt::where('provider_id', $provider->id)->orderBy('created_at', 'desc')->limit(25)->get()
         ]);
     }
 
@@ -79,8 +85,7 @@ class ProviderController extends Controller
     public function update(ProviderRequest $request, Provider $provider)
     {
         $provider->update($request->all());
-
-        return redirect()->route('providers.index')->withStatus(__('Provider successfully updated.'));
+        return redirect()->route('providers.index')->withStatus('Proveedor actualizado satisfactoriamente.');
     }
 
     /**
@@ -93,6 +98,6 @@ class ProviderController extends Controller
     {
         $provider->delete();
 
-        return redirect()->route('providers.index')->withStatus(__('Provider successfully deleted.'));
+        return redirect()->route('providers.index')->withStatus('Proveedor eliminado satisfactoriamente');
     }
 }

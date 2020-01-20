@@ -15,7 +15,7 @@ class ProductCategoryController extends Controller
      */
     public function index(ProductCategory $model)
     {
-        return view('inventory.categories.index', ['categories' => $model->paginate(15)]);
+        return view('inventory.categories.index', ['categories' => $model->paginate(25)]);
     }
 
     /**

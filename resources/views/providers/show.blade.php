@@ -29,10 +29,6 @@
                                 <td style="max-width: 175px">{{ $provider->paymentinfo }}</td>
                                 <td>{{ $provider->transactions->count() }}</td>
                                 <td>{{ abs($provider->transactions->sum('amount')) }}$</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </tbody>
                     </table>
@@ -44,7 +40,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Pagos Realizados: {{ $transactions->count() }}</h4>
+                    <h4 class="card-title">Últimos Pagos</h4>
                 </div>
                 <div class="card-body">
                     <table class="table">
@@ -70,10 +66,46 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer py-4">
-                    <nav class="d-flex justify-content-end">
-                        {{ $transactions->links() }}
-                    </nav>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Últimos Recibos</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <th>Fecha</th>
+                            <th>ID</th>
+                            <th>Titulo</th>
+                            <th>Productos</th>
+                            <th>Stock</th>
+                            <th>Stock Defectuoso</th>
+                            <th>Stock Total</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            @foreach ($receipts as $receipt)
+                                <tr>
+                                    <td>{{ date('d-m-y', strtotime($receipt->created_at)) }}</td>
+                                    <td><a href="{{ route('receipts.show', $receipt) }}">{{ $receipt->id }}</a></td>
+                                    <td>{{ $receipt->title }}</td>
+                                    <td>{{ $receipt->products->count() }}</td>
+                                    <td>{{ $receipt->products->sum('stock') }}</td>
+                                    <td>{{ $receipt->products->sum('stock_defective') }}</td>
+                                    <td>{{ $receipt->products->sum('stock') + $receipt->products->sum('stock_defective') }}</td>
+                                    <td class="td-actions text-right">
+                                        <a href="{{ route('receipts.show', $receipt) }}" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Ver Recibo">
+                                            <i class="tim-icons icon-zoom-split"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

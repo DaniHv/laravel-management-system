@@ -89,6 +89,12 @@
                                 <p>Categorías</p>
                             </a>
                         </li>
+                        <li @if ($pageSlug == 'receipts') class="active " @endif>
+                            <a href="{{ route('receipts.index') }}">
+                                <i class="tim-icons icon-paper"></i>
+                                <p>Recibos</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>

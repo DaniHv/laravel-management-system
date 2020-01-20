@@ -42,7 +42,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Ventas Producidas: {{ $product->solds->count() }}</h4>
+                    <h4 class="card-title">Últimas Ventas</h4>
                 </div>
                 <div class="card-body">
                     <table class="table">
@@ -52,6 +52,7 @@
                             <th>Cantidad</th>
                             <th>Precio Unidad</th>
                             <th>Monto Total</th>
+                            <th></th>
                         </thead>
                         <tbody>
                             @foreach ($solds as $sold)
@@ -61,15 +62,54 @@
                                     <td>{{ $sold->qty }}</td>
                                     <td>{{ $sold->price }}</td>
                                     <td>{{ $sold->total_amount }}</td>
+                                    <td class="td-actions text-right">
+                                        <a href="{{ route('sales.show', $sold->sale) }}" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Ver Venta">
+                                            <i class="tim-icons icon-zoom-split"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer py-4">
-                    <nav class="d-flex justify-content-end">
-                        {{ $solds->links() }}
-                    </nav>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Últimos Recibos</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <th>Fecha</th>
+                            <th>ID de Recibo</th>
+                            <th>Titulo</th>
+                            <th>Stock</th>
+                            <th>Stock Defectuoso</th>
+                            <th>Stock Total</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            @foreach ($receiveds as $received)
+                                <tr>
+                                    <td>{{ date('d-m-y', strtotime($received->created_at)) }}</td>
+                                    <td><a href="{{ route('receipts.show', $received->receipt) }}">{{ $received->receipt_id }}</a></td>
+                                    <td style="max-width:150px;">{{ $received->receipt->title }}</td>
+                                    <td>{{ $received->stock }}</td>
+                                    <td>{{ $received->stock_defective }}</td>
+                                    <td>{{ $received->stock + $received->stock_defective }}</td>
+                                    <td class="td-actions text-right">
+                                        <a href="{{ route('receipts.show', $received->receipt) }}" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Ver Recibo">
+                                            <i class="tim-icons icon-zoom-split"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
