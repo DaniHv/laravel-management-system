@@ -77,7 +77,15 @@ class SaleController extends Controller
     public function finalize(Sale $sale)
     {
         $sale->total_amount = $sale->products->sum('total_amount');
-        // dd($sale->client->balance);
+        foreach ($sale->products as $sold_product) {
+            $product_name = $sold_product->product->name;
+            $product_stock = $sold_product->product->stock;
+            if($sold_product->qty > $product_stock) return back()->withError("El producto '$product_name' no tiene suficiente stock. Solo tiene $product_stock unidades.");
+        }
+        foreach ($sale->products as $sold_product) {
+            $sold_product->product->stock -= $sold_product->qty;
+            $sold_product->product->save();
+        }
         $sale->finalized_at = Carbon::now()->toDateTimeString();
         $sale->client->balance -= $sale->total_amount;
         $sale->save();
