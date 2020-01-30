@@ -52,9 +52,7 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         return view('clients.show', [
-            'client' => $client,
-            'sales' => Sale::where('client_id', $client->id)->orderBy('created_at', 'desc')->paginate(25),
-            'transactions' => Transaction::where('client_id', $client->id)->orderBy('created_at', 'desc')->paginate(25)
+            'client' => $client
         ]);
     }
 

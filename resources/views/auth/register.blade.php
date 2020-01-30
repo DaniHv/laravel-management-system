@@ -51,8 +51,7 @@
                             <label class="form-check-label">
                                 <input class="form-check-input {{ $errors->has('agree_terms_and_conditions') ? ' is-invalid' : '' }}" name="agree_terms_and_conditions"  type="checkbox"  {{ old('agree_terms_and_conditions') ? 'checked' : '' }}>
                                 <span class="form-check-sign"></span>
-                                acepto la wea
-                                <a href="#">terminos y su puta madre</a>.
+                                Confirmo que soy humano.
                                 @include('alerts.feedback', ['field' => 'agree_terms_and_conditions'])
                             </label>
                         </div>

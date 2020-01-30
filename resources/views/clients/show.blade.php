@@ -39,7 +39,7 @@
                                 </td>
                                 <td>{{ $client->sales->count() }}</td>
                                 <td>{{ $client->transactions->sum('amount') }}$</td>
-                                <td>{{ date('d-m-y', strtotime($sales->first()->created_at)) }}</td>
+                                <td>{{ (empty($client->sales)) ? date('d-m-y', strtotime($client->sales->reverse()->first()->created_at)) : 'NUNCA' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -49,7 +49,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6">
+    <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -70,7 +70,7 @@
                             <th>Monto</th>
                         </thead>
                         <tbody>
-                            @foreach ($transactions as $transaction)
+                            @foreach ($client->transactions->reverse()->take(25) as $transaction)
                                 <tr>
                                     <td>{{ $transaction->id }}</td>
                                     <td>{{ date('d-m-y', strtotime($transaction->created_at)) }}</td>
@@ -113,7 +113,7 @@
                             <th></th>
                         </thead>
                         <tbody>
-                            @foreach ($sales as $sale)
+                            @foreach ($client->sales->reverse()->take(25) as $sale)
                                 <tr>
                                     <td><a href="{{ route('sales.show', $sale) }}">{{ $sale->id }}</a></td>
                                     <td>{{ date('d-m-y', strtotime($sale->created_at)) }}</td>

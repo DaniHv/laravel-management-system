@@ -116,7 +116,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request, Transaction $transaction)
     {
-        if($request->all()['client_id']) {
+        if(isset($request->all()['client_id'])) {
             switch($request->all()['type']) {
                 case 'income':
                     $request->merge(['title' => 'Pago Recibido de Cliente ID: '.$request->all()['client_id']]);
