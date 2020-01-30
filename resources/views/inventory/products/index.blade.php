@@ -31,7 +31,7 @@
                             <tbody>
                                 @foreach ($products as $product)
                                     <tr>
-                                        <td><a href="{{ route('categories.show', $product->category) }}">{{ $product->category['name'] }}</a></td>
+                                        <td><a href="{{ route('categories.show', $product->category) }}">{{ $product->category->name }}</a></td>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->price }}$</td>
                                         <td>{{ $product->stock }}</td>

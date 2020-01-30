@@ -50,11 +50,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::match(['put', 'patch'], 'sales/{sale}/product/{soldproduct}', ['as' => 'sales.product.update', 'uses' => 'SaleController@updateproduct']);
     Route::delete('sales/{sale}/product/{soldproduct}', ['as' => 'sales.product.destroy', 'uses' => 'SaleController@destroyproduct']);
 
-    Route::get('sales/{sale}/transaction/add', ['as' => 'sales.transaction.add', 'uses' => 'SaleController@addtransaction']);
-    Route::get('sales/{sale}/transaction/{transaction}/edit', ['as' => 'sales.transaction.edit', 'uses' => 'SaleController@edittransaction']);
-    Route::post('sales/{sale}/transaction', ['as' => 'sales.transaction.store', 'uses' => 'SaleController@storetransaction']);
-    Route::match(['put', 'patch'], 'sales/{sale}/transaction/{transaction}', ['as' => 'sales.transaction.update', 'uses' => 'SaleController@updatetransaction']);
-    Route::delete('sales/{sale}/transaction/{transaction}', ['as' => 'sales.transaction.destroy', 'uses' => 'SaleController@destroytransaction']);
+    Route::get('clients/{client}/transactions/add', ['as' => 'clients.transactions.add', 'uses' => 'ClientController@addtransaction']);
 
     Route::get('profile', ['as' => 'profile.edit', 'uses' => 'ProfileController@edit']);
     Route::match(['put', 'patch'], 'profile', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);

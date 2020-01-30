@@ -22,6 +22,7 @@
                             <thead class=" text-primary">
                                 <th>Nombre</th>
                                 <th>Email / Teléfono</th>
+                                <th>Balance</th>
                                 <th>Compras</th>
                                 <th>Total Pagado</th>
                                 <th>Última Compra</th>
@@ -36,7 +37,16 @@
                                             <br>
                                             {{ $client->phone }}
                                         </td>
-                                        <td>{{ $client->sales->count() }} ({{ $client->sales->sum('total_amount') }}$)</td>
+                                        <td>
+                                            @if (round($client->balance) > 0)
+                                                <span style="color:green">{{ $client->balance }}$</span>
+                                            @elseif (round($client->balance) < 0.00)
+                                                <span style="color:red">{{ $client->balance }}$</span>
+                                            @else
+                                                {{ $client->balance }}$
+                                            @endif
+                                        </td>
+                                        <td>{{ $client->sales->count() }}</td>
                                         <td>{{ $client->transactions->sum('amount') }}$</td>
                                         <td>{{ ($client->sales->sortByDesc('created_at')->first()) ? date('d-m-y', strtotime($client->sales->sortByDesc('created_at')->first()->created_at)) : 'NUNCA' }}</td>
                                         <td class="td-actions text-right">

@@ -20,8 +20,7 @@ class SaleController extends Controller
     public function index()
     {
         return view('sales.index', [
-            'sales' => Sale::where('finalized_at', '!=', null)->orderBy('created_at', 'desc')->paginate(25),
-            'unfinishedSales' => Sale::where('finalized_at', null)->orderBy('created_at', 'desc')->get()
+            'sales' => Sale::orderBy('created_at', 'desc')->paginate(25)
         ]);
 
     }
@@ -78,8 +77,11 @@ class SaleController extends Controller
     public function finalize(Sale $sale)
     {
         $sale->total_amount = $sale->products->sum('total_amount');
+        // dd($sale->client->balance);
         $sale->finalized_at = Carbon::now()->toDateTimeString();
+        $sale->client->balance -= $sale->total_amount;
         $sale->save();
+        $sale->client->save();
         return back()->withStatus('La venta ha sido finalizada satisfactoriamente.');
     }
 

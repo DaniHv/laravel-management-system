@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Sale;
+use App\Client;
 use App\Provider;
 use Carbon\Carbon;
 use App\SoldProduct;
@@ -38,118 +39,30 @@ class TransactionController extends Controller
         $salesperiods = [];
         $transactionsperiods = [];
 
-        $daySales = Sale::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->get();
-        $dayProducts = SoldProduct::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->get();
-        $dayTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->get();
-        $daySalesTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->where('sale_id', '!=', null)->get();
-        $salesperiods['Dia'] = [
-            'sales' => $daySales->count(),
-            'clients' => Sale::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('client_id')->count(),
-            'products' => $dayProducts->sum('qty'),
-            'uniqueproducts' => SoldProduct::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('product_id')->count(),
-            'unfinalized' => $daySales->where('finalized_at', null)->count(),
-            'transactions' => $daySalesTransactions->count(),
-            'balance' => $daySalesTransactions->sum('amount'),
-            'avg' => Transaction::selectRaw('sale_id, max(created_at), sum(amount) as total_amount')->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->where('sale_id', '!=', null)->groupBy('sale_id')->get()->avg('total_amount')
-        ];
-        $transactionsperiods['Dia'] = [
-            'transactions' => $dayTransactions->count(),
-            'incomes' => $dayTransactions->where('amount', '>', 0)->sum('amount'),
-            'expenses' => $dayTransactions->where('amount', '<', 0)->sum('amount'),
-            'balance' => $dayTransactions->sum('amount')
-        ];
+        $salesperiods['Dia'] = Sale::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->get();
+        $transactionsperiods['Dia'] = Transaction::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->get();
 
-        $weekSales = Sale::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
-        $weekProducts = SoldProduct::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
-        $weekTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
-        $weekSalesTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->where('sale_id', '!=', null)->get();
-        $salesperiods['Semana'] = [
-            'sales' => $weekSales->count(),
-            'clients' => Sale::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->distinct('client_id')->count(),
-            'products' => $weekProducts->sum('qty'),
-            'uniqueproducts' => SoldProduct::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->distinct('product_id')->count(),
-            'unfinalized' => $weekSales->where('finalized_at', null)->count(),
-            'transactions' => $weekSalesTransactions->count(),
-            'balance' => $weekSalesTransactions->sum('amount'),
-            'avg' => Transaction::selectRaw('sale_id, max(created_at), sum(amount) as total_amount')->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->where('sale_id', '!=', null)->groupBy('sale_id')->get()->avg('total_amount')
-        ];
-        $transactionsperiods['Semana'] = [
-            'transactions' => $weekTransactions->count(),
-            'incomes' => $weekTransactions->where('amount', '>', 0)->sum('amount'),
-            'expenses' => $weekTransactions->where('amount', '<', 0)->sum('amount'),
-            'balance' => $weekTransactions->sum('amount')
-        ];
+        $salesperiods['Ayer'] = Sale::whereBetween('created_at', [Carbon::now()->subDay(1)->startOfDay(), Carbon::now()->subDay(1)->endOfDay()])->get();
+        $transactionsperiods['Ayer'] = Transaction::whereBetween('created_at', [Carbon::now()->subDay(1)->startOfDay(), Carbon::now()->subDay(1)->endOfDay()])->get();
 
-        $monthSales = Sale::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
-        $monthProducts = SoldProduct::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
-        $monthTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
-        $monthSalesTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->where('sale_id', '!=', null)->get();
-        $salesperiods['Mes'] = [
-            'sales' => $monthSales->count(),
-            'clients' => Sale::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->distinct('client_id')->count(),
-            'products' => $monthProducts->sum('qty'),
-            'uniqueproducts' => SoldProduct::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->distinct('product_id')->count(),
-            'unfinalized' => $monthSales->where('finalized_at', null)->count(),
-            'transactions' => $monthSalesTransactions->count(),
-            'balance' => $monthSalesTransactions->sum('amount'),
-            'avg' => Transaction::selectRaw('sale_id, max(created_at), sum(amount) as total_amount')->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->where('sale_id', '!=', null)->groupBy('sale_id')->get()->avg('total_amount')
-        ];
-        $transactionsperiods['Mes'] = [
-            'transactions' => $monthTransactions->count(),
-            'incomes' => $monthTransactions->where('amount', '>', 0)->sum('amount'),
-            'expenses' => $monthTransactions->where('amount', '<', 0)->sum('amount'),
-            'balance' => $monthTransactions->sum('amount')
-        ];
+        $salesperiods['Semana'] = Sale::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
+        $transactionsperiods['Semana'] = Transaction::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
 
-        $quarterSales = Sale::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->get();
-        $quarterProducts = SoldProduct::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->get();
-        $quarterTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->get();
-        $quarterSalesTransactions = Transaction::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->where('sale_id', '!=', null)->get();
-        $salesperiods['Trimestre'] = [
-            'sales' => $quarterSales->count(),
-            'clients' => Sale::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->distinct('client_id')->count(),
-            'products' => $quarterProducts->sum('qty'),
-            'uniqueproducts' => SoldProduct::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->distinct('product_id')->count(),
-            'unfinalized' => $quarterSales->where('finalized_at', null)->count(),
-            'transactions' => $quarterSalesTransactions->count(),
-            'balance' => $quarterSalesTransactions->sum('amount'),
-            'avg' => Transaction::selectRaw('sale_id, max(created_at), sum(amount) as total_amount')->whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->where('sale_id', '!=', null)->groupBy('sale_id')->get()->avg('total_amount')
-        ];
-        $transactionsperiods['Trimestre'] = [
-            'transactions' => $quarterTransactions->count(),
-            'incomes' => $quarterTransactions->where('amount', '>', 0)->sum('amount'),
-            'expenses' => $quarterTransactions->where('amount', '<', 0)->sum('amount'),
-            'balance' => $quarterTransactions->sum('amount')
-        ];
+        $salesperiods['Mes'] = Sale::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
+        $transactionsperiods['Mes'] = Transaction::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->get();
 
-        $yearSales = Sale::whereYear('created_at', Carbon::now()->year)->get();
-        $yearProducts = SoldProduct::whereYear('created_at', Carbon::now()->year)->get();
-        $yearTransactions = Transaction::whereYear('created_at', Carbon::now()->year)->get();
-        $yearSalesTransactions = Transaction::whereYear('created_at', Carbon::now()->year)->where('sale_id', '!=', null)->get();
-        $salesperiods['Año'] = [
-            'sales' => $yearSales->count(),
-            'clients' => Sale::whereYear('created_at', Carbon::now()->year)->distinct('client_id')->count(),
-            'products' => $yearProducts->sum('qty'),
-            'uniqueproducts' => SoldProduct::whereYear('created_at', Carbon::now()->year)->distinct('product_id')->count(),
-            'unfinalized' => $yearSales->where('finalized_at', null)->count(),
-            'transactions' => $yearSalesTransactions->count(),
-            'balance' => $yearSalesTransactions->sum('amount'),
-            'avg' => Transaction::selectRaw('sale_id, max(created_at), sum(amount) as total_amount')->whereYear('created_at', Carbon::now()->year)->where('sale_id', '!=', null)->groupBy('sale_id')->get()->avg('total_amount')
-        ];
-        $transactionsperiods['Año'] = [
-            'transactions' => $yearTransactions->count(),
-            'incomes' => $yearTransactions->where('amount', '>', 0)->sum('amount'),
-            'expenses' => $yearTransactions->where('amount', '<', 0)->sum('amount'),
-            'balance' => $yearTransactions->sum('amount')
-        ];
-        
+        $salesperiods['Trimestre'] = Sale::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->get();
+        $transactionsperiods['Trimestre'] = Transaction::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->get();
+
+        $salesperiods['Año'] = Sale::whereYear('created_at', Carbon::now()->year)->get();
+        $transactionsperiods['Año'] = Transaction::whereYear('created_at', Carbon::now()->year)->get();
 
         return view('transactions.stats', [
+            'clients' => Client::where('balance', '!=', '0.00')->get(),
             'salesperiods' => $salesperiods,
             'transactionsperiods' => $transactionsperiods,
             'date' => Carbon::now(),
-            'methods' => PaymentMethod::all(),
-            'yeartransactions' => $yearTransactions,
+            'methods' => PaymentMethod::all()
         ]);
     }
 
@@ -203,6 +116,24 @@ class TransactionController extends Controller
      */
     public function store(Request $request, Transaction $transaction)
     {
+        if($request->all()['client_id']) {
+            switch($request->all()['type']) {
+                case 'income':
+                    $request->merge(['title' => 'Pago Recibido de Cliente ID: '.$request->all()['client_id']]);
+                    break;
+                case 'expense':
+                    $request->merge(['title' => 'Pago de Vuelto de Cliente ID: '.$request->all()['client_id']]);
+                    if($request->all()['amount'] > 0) {
+                        $request->merge(['amount' => ( (float) $request->all()['amount'] * (-1))]);
+                    }
+                    break;
+            }
+            $transaction->create($request->all());
+            $client = Client::find($request->all()['client_id']);
+            $client->balance += $request->all()['amount'];
+            $client->save();
+            return redirect()->route('clients.show', $request->all()['client_id'])->withStatus('Transacción registrada satisfactoriamente.');
+        }
         switch($request->all()['type']) {
             case 'expense':
                 if($request->all()['amount'] > 0) {

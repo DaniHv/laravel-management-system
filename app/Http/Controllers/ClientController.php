@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Sale;
 use App\Client;
+use App\Transaction;
+use App\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Http\Requests\ClientRequest;
 
@@ -51,7 +53,8 @@ class ClientController extends Controller
     {
         return view('clients.show', [
             'client' => $client,
-            'sales' => Sale::where('client_id', $client->id)->orderBy('created_at', 'desc')->paginate(25)
+            'sales' => Sale::where('client_id', $client->id)->orderBy('created_at', 'desc')->paginate(25),
+            'transactions' => Transaction::where('client_id', $client->id)->orderBy('created_at', 'desc')->paginate(25)
         ]);
     }
 
@@ -91,6 +94,13 @@ class ClientController extends Controller
     {
         $client->delete();
         return redirect()->route('clients.index')->withStatus('Cliente eliminado satisfactoriamente.');
+    }
 
+    public function addtransaction(Client $client)
+    {
+        return view('clients.transactions.add', [
+            'client' => $client,
+            'payment_methods' => PaymentMethod::all()
+        ]);
     }
 }

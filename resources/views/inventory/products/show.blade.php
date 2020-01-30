@@ -27,8 +27,8 @@
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->stock }}</td>
                                 <td>{{ $product->stock_defective }}</td>
-                                <td>{{ $product->price }}</td>
-                                <td>{{ round($product->solds->avg('price'), 2) }}</td>
+                                <td>{{ $product->price }}$</td>
+                                <td>{{ round($product->solds->avg('price'), 2) }}$</td>
                                 <td>{{ $product->solds->sum('qty') }}</td>
                                 <td>{{ $product->solds->sum('total_amount') }}</td>
                             </tr>
@@ -60,8 +60,8 @@
                                     <td>{{ date('d-m-y', strtotime($sold->created_at)) }}</td>
                                     <td><a href="{{ route('sales.show', $sold->sale) }}">{{ $sold->sale_id }}</a></td>
                                     <td>{{ $sold->qty }}</td>
-                                    <td>{{ $sold->price }}</td>
-                                    <td>{{ $sold->total_amount }}</td>
+                                    <td>{{ $sold->price }}$</td>
+                                    <td>{{ $sold->total_amount }}$</td>
                                     <td class="td-actions text-right">
                                         <a href="{{ route('sales.show', $sold->sale) }}" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Ver Venta">
                                             <i class="tim-icons icon-zoom-split"></i>
